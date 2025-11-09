@@ -73,7 +73,7 @@ def decentralized_altgdmin(X_k_dict, y_k_dict, S_g_dict, G, U, params, Tgd, max_
     plt.grid(True, which='both', linestyle='--', alpha=0.7)
     plt.tight_layout()
     plt.show()
-
+    plt.savefig('subspace_distance.png')
     # Second plot: Subspace Distance vs Execution Time (log scale)
     plt.figure(figsize=(6, 4))
     plt.semilogy(times, errors, 'k-o', linewidth=2, markersize=3)
@@ -84,6 +84,7 @@ def decentralized_altgdmin(X_k_dict, y_k_dict, S_g_dict, G, U, params, Tgd, max_
     plt.grid(True, which='both', linestyle='--', alpha=0.7)
     plt.tight_layout()
     plt.show()
+    plt.savefig('subspace_distance_execution_time.png')
 
     return U, errors, times, subspace_dists, B
 
