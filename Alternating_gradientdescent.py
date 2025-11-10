@@ -63,6 +63,7 @@ def decentralized_altgdmin(X_k_dict, y_k_dict, S_g_dict, G, U, params, Tgd, max_
         errors.append((err))
         times.append(time.time() - t0)
 
+    print("error at the end", errors[len(errors)-1])
     # ---- Plot (log scale y-axis for better visibility) ----
     plt.figure(figsize=(6, 4))
     plt.semilogy(errors, 'k-o', linewidth=2, markersize=3)
