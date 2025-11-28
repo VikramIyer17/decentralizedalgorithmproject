@@ -3,10 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import Subspace_distance
-<<<<<<< HEAD
-=======
 import node1file
->>>>>>> 5071e97 (loadingec2instances)
 def initialization(X_k_dict, y_k_dict, S_g_dict, G, params, U_star):
     n, T, r, L = params['n'], params['T'], params['r'], params['L']
     T_pm, T_con = params['T_pm'], params['T_con']
@@ -14,15 +11,6 @@ def initialization(X_k_dict, y_k_dict, S_g_dict, G, params, U_star):
     max_diagonalvalue = 0
     alpha = {}
     total1 = 0
-<<<<<<< HEAD
-    for g in range(L):
-        total = 0.0
-        for k in S_g_dict[g]:
-            total += float(np.sum(y_k_dict[k] ** 2))
-        alpha[g] = C_tilde * total / (n * T)
-        total1 += alpha[g]
-    print("total", total1)
-=======
     # for g in range(L):
     total = 0.0
     for k in S_g_dict:
@@ -30,7 +18,6 @@ def initialization(X_k_dict, y_k_dict, S_g_dict, G, params, U_star):
     alpha = C_tilde * total / (n * T)
     # total1 += alpha[g]
     # print("total", total1)
->>>>>>> 5071e97 (loadingec2instances)
     # 2) consensus on alpha
     alpha_cons = Average_consensus.avg_consensus(G, alpha, T_con)
     print("alpha_cons", alpha_cons)

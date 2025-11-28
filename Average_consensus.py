@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-=======
+
 import numpy as np
 
-
->>>>>>> 5071e97 (loadingec2instances)
 def avg_consensus(G, Z_in, T_con):
     """
     Z_in: dict node -> numpy array (or scalar)
@@ -17,7 +14,7 @@ def avg_consensus(G, Z_in, T_con):
     # degrees
     deg = {g: G.degree(g) for g in nodes}
     # Metropolis weights: W[g][j] for j neighbor of g
-<<<<<<< HEAD
+
     W = {g: {} for g in nodes}
     for g in nodes:
         for j in G.neighbors(g):
@@ -33,7 +30,7 @@ def avg_consensus(G, Z_in, T_con):
             Z[g] = np.array(val, copy=True)
         except Exception:
             Z[g] = val
-=======
+
     W = {0: {}}
     # for g in nodes:
     for j in G.neighbors(0):
@@ -49,12 +46,12 @@ def avg_consensus(G, Z_in, T_con):
         Z[0] = np.array(val, copy=True)
     except Exception:
         Z[0] = val
->>>>>>> 5071e97 (loadingec2instances)
+
 
     # iterative mixing: Z <- sum_j W_gj * Zj
     for _ in range(T_con):
         Z_new = {}
-<<<<<<< HEAD
+
         for g in nodes:
             cur = None
             for j, w in W[g].items():
@@ -63,7 +60,7 @@ def avg_consensus(G, Z_in, T_con):
                 else:
                     cur = cur + w * Z[j]
             Z_new[g] = cur
-=======
+
         # for g in nodes:
         cur = None
         for j, w, in W[0].items():
@@ -72,7 +69,7 @@ def avg_consensus(G, Z_in, T_con):
             else:
                 cur = cur + w * Z[j]
             Z_new[0] = cur
->>>>>>> 5071e97 (loadingec2instances)
+
         Z = Z_new
 
     # return scaled-by-L values (paper expects L * average)
