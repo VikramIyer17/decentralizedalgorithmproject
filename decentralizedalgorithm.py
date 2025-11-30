@@ -59,7 +59,7 @@ def main():
     plt.show()
 
     loadingec2instances.load_ec2_node_ips()
-    loadingec2instances.load_neighbor_ips(G.neighbors(0))
+    loadingec2instances.load_neighbor_ips(neighbors)
 
     if not nx.is_connected(G):
         print(f"Graph: {params['L']} nodes, edges = {G.number_of_edges()}")
