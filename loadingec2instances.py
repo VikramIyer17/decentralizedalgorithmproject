@@ -29,7 +29,7 @@ def load_ec2_node_ips():
     for reservation in response["Reservations"]:
         for instance in reservation["Instances"]:
             ip = instance["PrivateIpAddress"]
-            node_name = f"node{count}"
+            node_name = count
             nodes[node_name] = ip
             count += 1
     print("nodes ",nodes, flush=True)
