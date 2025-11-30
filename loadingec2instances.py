@@ -49,7 +49,7 @@ def load_neighbor_ips(G):
     # graph = json.loads(res["Parameter"]["Value"])
 
     # 3. find neighbors of this node (node names)
-    neighbor_nodes = list(G[0])
+    neighbor_nodes = G[0]
 
     # 4. convert neighbor names → IP addresses
     neighbor_ips = [node_ips[n - 1] for n in neighbor_nodes]
