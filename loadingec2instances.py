@@ -50,7 +50,7 @@ def load_neighbor_ips(G):
 
     # 3. find neighbors of this node (node names)
     neighbor_nodes = G
-
+    print("G ", G, flush=True)
     # 4. convert neighbor names → IP addresses
     neighbor_ips = [node_ips[n - 1] for n in neighbor_nodes]
     print("neighbor ips  ",neighbor_ips, flush=True)
