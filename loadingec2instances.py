@@ -3,7 +3,6 @@ import json
 import requests
 from flask import Flask, request, jsonify
 
-from node1file import NODE_ID
 
 app = Flask(__name__)
 
@@ -60,40 +59,40 @@ def load_neighbor_ips(G):
 visited = set()
 
 
-@app.route("/visit", methods=["POST"])
-def visit():
-    global visited
-
-    data = request.json
-    sender = data["from"]
-
-    print(f"{NODE_ID} visited from {sender}")
-
-    # Already visited? Skip
-    if NODE_ID in visited:
-        return jsonify({"status": "already_visited"})
-
-    visited.add(NODE_ID)
-
-    # BFS propagate
-    neighbors = load_neighbor_ips()
-
-    for neighbor_ip in neighbors:
-        try:
-            requests.post(
-                f"http://{neighbor_ip}:5000/visit",
-                json={"from": NODE_ID},
-                timeout=1
-            )
-        except Exception as e:
-            print(f"Failed to contact {neighbor_ip}: {e}")
-
-    return jsonify({"status": "ok"})
-
-
-@app.route("/start_bfs", methods=["POST"])
-def start_bfs():
-    return visit()
+# @app.route("/visit", methods=["POST"])
+# def visit():
+#     global visited
+#
+#     data = request.json
+#     sender = data["from"]
+#
+#     print(f"{NODE_ID} visited from {sender}")
+#
+#     # Already visited? Skip
+#     if NODE_ID in visited:
+#         return jsonify({"status": "already_visited"})
+#
+#     visited.add(NODE_ID)
+#
+#     # BFS propagate
+#     # neighbors = load_neighbor_ips()
+#
+#     for neighbor_ip in neighbors:
+#         try:
+#             requests.post(
+#                 f"http://{neighbor_ip}:5000/visit",
+#                 json={"from": NODE_ID},
+#                 timeout=1
+#             )
+#         except Exception as e:
+#             print(f"Failed to contact {neighbor_ip}: {e}")
+#
+#     return jsonify({"status": "ok"})
+#
+#
+# @app.route("/start_bfs", methods=["POST"])
+# def start_bfs():
+#     return visit()
 
 
 if __name__ == "__main__":
