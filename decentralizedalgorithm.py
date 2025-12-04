@@ -46,7 +46,6 @@ def main():
     S_g = {g: list(parts[g]) for g in range(params['L'])}
     print("sg", S_g[0])
 
-    neighbors = list(G.neighbors(0))
     # np.random.shuffle(idx)
     # parts = np.array_split(idx, params['L'])
     S_g = idx
@@ -57,7 +56,7 @@ def main():
     nx.draw(G, with_labels=True, node_color='lightblue', edge_color='gray', node_size=500)
     plt.title(f"Path Graph with {params['L']} Nodes")
     plt.show()
-
+    neighbors = list(G.neighbors(0))
     loadingec2instances.load_ec2_node_ips()
     loadingec2instances.load_neighbor_ips(neighbors)
 
