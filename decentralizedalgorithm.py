@@ -4,6 +4,8 @@ from scipy.linalg import orth
 import math
 import pickle
 import os
+from flask import app, request, jsonify
+
 import time
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
@@ -22,8 +24,14 @@ import Average_consensus
 # ---------------------------
 #  Main demo driver (improved plotting)
 # ---------------------------
+@app.route("/main", methods=["POST"])
+
 def main():
     node = 0
+    data = request.json
+    nodeid = data["to"]
+
+    print(f"node id is {nodeid}", flush=True)
     np.random.seed(0)
     quick_run = True  # set True to test quickly on small sizes
     if quick_run:
@@ -56,7 +64,7 @@ def main():
     nx.draw(G, with_labels=True, node_color='lightblue', edge_color='gray', node_size=500)
     plt.title(f"Path Graph with {params['L']} Nodes")
     plt.show()
-    neighbors = list(G.neighbors(0))
+    neighbors = list(G.neighbors(nodeid))
     loadingec2instances.load_ec2_node_ips()
     loadingec2instances.load_neighbor_ips(neighbors)
 
