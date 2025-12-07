@@ -53,46 +53,48 @@ def load_neighbor_ips(G):
     # 4. convert neighbor names → IP addresses
     neighbor_ips = [node_ips[n] for n in neighbor_nodes]
     print("neighbor ips  ",neighbor_ips, flush=True)
+    visit(G, neighbor_ips)
     return neighbor_ips
+
 
 
 visited = set()
 
 
-# @app.route("/visit", methods=["POST"])
-# def visit():
-#     global visited
-#
-#     data = request.json
-#     sender = data["from"]
-#
-#     print(f"{NODE_ID} visited from {sender}")
-#
-#     # Already visited? Skip
-#     if NODE_ID in visited:
-#         return jsonify({"status": "already_visited"})
-#
-#     visited.add(NODE_ID)
-#
-#     # BFS propagate
-#     # neighbors = load_neighbor_ips()
-#
-#     for neighbor_ip in neighbors:
-#         try:
-#             requests.post(
-#                 f"http://{neighbor_ip}:5000/visit",
-#                 json={"from": NODE_ID},
-#                 timeout=1
-#             )
-#         except Exception as e:
-#             print(f"Failed to contact {neighbor_ip}: {e}")
-#
-#     return jsonify({"status": "ok"})
-#
-#
-# @app.route("/start_bfs", methods=["POST"])
-# def start_bfs():
-#     return visit()
+@app.route("/visit", methods=["POST"])
+def visit(G, neighbor_ips):
+    global visited
+
+    data = request.json
+    sender = data["from"]
+
+    print(f"{NODE_ID} visited from {sender}")
+
+    # Already visited? Skip
+    if NODE_ID in visited:
+        return jsonify({"status": "already_visited"})
+
+    visited.add(NODE_ID)
+
+    # BFS propagate
+    neighbors = neighbor_ips
+
+    for neighbor_ip in neighbors:
+        try:
+            requests.post(
+                f"http://{neighbor_ip}:5000/main",
+                json={"to": neighbor_ip},
+                timeout=1
+            )
+        except Exception as e:
+            print(f"Failed to contact {neighbor_ip}: {e}")
+
+    return jsonify({"status": "ok"})
+
+
+@app.route("/st   art_bfs", methods=["POST"])
+def start_bfs():
+    return visit()
 
 
 if __name__ == "__main__":

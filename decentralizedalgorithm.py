@@ -1,5 +1,6 @@
 import numpy as np
 import networkx as nx
+from flask import app, request, jsonify
 from scipy.linalg import orth
 import math
 import pickle
@@ -22,8 +23,11 @@ import Average_consensus
 # ---------------------------
 #  Main demo driver (improved plotting)
 # ---------------------------
+@app.route("/main", methods=["POST"])
+
 def main():
-    node = 0
+    # node = 0
+    NODE_ID = 0
     np.random.seed(0)
     quick_run = True  # set True to test quickly on small sizes
     if quick_run:
@@ -57,7 +61,7 @@ def main():
     plt.title(f"Path Graph with {params['L']} Nodes")
     plt.show()
     neighbors = list(G.neighbors(0))
-    loadingec2instances.load_ec2_node_ips()
+    # loadingec2instances.load_ec2_node_ips()
     loadingec2instances.load_neighbor_ips(neighbors)
 
     if not nx.is_connected(G):
