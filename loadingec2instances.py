@@ -1,10 +1,9 @@
 import boto3
 import json
 import requests
-from flask import Flask, request, jsonify
+from flask import  request, jsonify
+from decentralizedalgorithm import app
 
-
-app = Flask(__name__)
 
 ssm = boto3.client("ssm", region_name="us-east-1")
 ec2 = boto3.client("ec2", region_name="us-east-1")

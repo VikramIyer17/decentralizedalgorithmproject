@@ -4,7 +4,7 @@ from scipy.linalg import orth
 import math
 import pickle
 import os
-from flask import app, request, jsonify
+from flask import Flask, request, jsonify
 
 import time
 import matplotlib.pyplot as plt
@@ -17,6 +17,7 @@ import Initialization
 import loadingec2instances
 import Average_consensus
 
+app = Flask(__name__)
 
 
 
