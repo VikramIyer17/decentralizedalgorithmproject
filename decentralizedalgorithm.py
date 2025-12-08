@@ -1,6 +1,6 @@
 import numpy as np
 import networkx as nx
-from flask import app, request, jsonify
+from flask import Flask, request, jsonify
 from scipy.linalg import orth
 import math
 import pickle
@@ -14,7 +14,10 @@ import Alternating_gradientdescent
 import Initialization
 
 import loadingec2instances
+# from loadingec2instances import app
 import Average_consensus
+
+app = Flask(__name__)
 
 
 
@@ -28,6 +31,7 @@ import Average_consensus
 def main():
     # node = 0
     NODE_ID = 0
+
     np.random.seed(0)
     quick_run = True  # set True to test quickly on small sizes
     if quick_run:
