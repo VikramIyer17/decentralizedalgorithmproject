@@ -71,8 +71,8 @@ def visit(neighbor_ips):
 
     # Already visited? Skip
     if NODE_ID in visited:
-        return jsonify({"status": "already_visited"})
-
+        print(f"Node {NODE_ID} already visited → stopping.")
+        return
     visited.add(NODE_ID)
 
     # BFS propagate
@@ -87,8 +87,6 @@ def visit(neighbor_ips):
             )
         except Exception as e:
             print(f"Failed to contact {neighbor_ip}: {e}")
-
-    return jsonify({"status": "ok"})
 
 
 # @app.route("/start_bfs", methods=["POST"])
