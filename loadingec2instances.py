@@ -63,10 +63,10 @@ visited = set()
 def visit(G, neighbor_ips):
     global visited
 
-    data = request.json
-    sender = data["from"]
-
-    print(f"{NODE_ID} visited from {sender}")
+    # data = request.json
+    # sender = data["from"]
+    #
+    # print(f"{NODE_ID} visited from {sender}")
 
     # Already visited? Skip
     if NODE_ID in visited:
