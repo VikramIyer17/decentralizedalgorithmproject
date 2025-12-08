@@ -34,12 +34,13 @@ def load_ec2_node_ips():
     return nodes
 
 
-def load_neighbor_ips(G):
+def load_neighbor_ips(G, nodeid):
     """
     Loads neighbors from /cluster/graph_neighbors
     Converts neighbor node names → IP addresses from EC2
     """
     # 1. load node→IP mapping from running EC2 instances
+    NODE_ID = nodeid
     node_ips = load_ec2_node_ips()
 
     # 2. load graph structure from SSM
@@ -63,10 +64,10 @@ visited = set()
 def visit(neighbor_ips):
     global visited
 
-    data = request.json
-    sender = data["from"]
-
-    print(f"{NODE_ID} visited from {sender}")
+    # data = request.json
+    # sender = data["from"]
+    #
+    # print(f"{NODE_ID} visited from {sender}")
 
     # Already visited? Skip
     if NODE_ID in visited:
