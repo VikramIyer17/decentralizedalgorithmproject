@@ -59,7 +59,7 @@ def load_neighbor_ips(G):
 visited = set()
 
 
-@app.route("/visit", methods=["POST"])
+# @app.route("/visit", methods=["POST"])
 def visit(neighbor_ips):
     global visited
 
@@ -90,7 +90,7 @@ def visit(neighbor_ips):
     return jsonify({"status": "ok"})
 
 
-@app.route("/start_bfs", methods=["POST"])
+# @app.route("/start_bfs", methods=["POST"])
 def start_bfs():
     return visit()
 
