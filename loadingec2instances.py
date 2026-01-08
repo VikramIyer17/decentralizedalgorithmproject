@@ -1,8 +1,9 @@
 import boto3
 import json
 import requests
-from flask import request, jsonify
-from decentralizedalgorithm import app
+
+# DO NOT import app from anywhere - this causes circular import!
+# The Flask app is defined in decentralizedalgorithm.py
 
 ssm = boto3.client("ssm", region_name="us-east-1")
 ec2 = boto3.client("ec2", region_name="us-east-1")
@@ -102,7 +103,3 @@ def propagate_to_neighbors(neighbor_ids, neighbor_ips, G):
             print(f"Connection error contacting neighbor {neighbor_id} at {neighbor_ip}", flush=True)
         except Exception as e:
             print(f"Failed to contact neighbor {neighbor_id} at {neighbor_ip}: {e}", flush=True)
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)

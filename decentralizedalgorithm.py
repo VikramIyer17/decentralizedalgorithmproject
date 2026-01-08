@@ -12,10 +12,12 @@ import Sample_generation
 import Subspace_distance
 import Alternating_gradientdescent
 import Initialization
-
-from loadingec2instances import load_neighbor_ips
 import Average_consensus
 
+# Import only the functions, not the app
+from loadingec2instances import load_neighbor_ips
+
+# Define Flask app HERE (not in loadingec2instances)
 app = Flask(__name__)
 
 
@@ -46,7 +48,7 @@ def main():
 
     # Ensure graph is connected
     if not nx.is_connected(G):
-        print(f"Warning: Graph is not connected. {params['L']} nodes, edges = {G.number_of_edges()}")
+        print(f"Warning: Graph is not connected. {params['L']} nodes, edges = {G.number_of_edges()}", flush=True)
 
     # Partition data across nodes
     np.random.shuffle(idx)
