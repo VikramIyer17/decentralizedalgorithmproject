@@ -1,10 +1,10 @@
 import numpy as np
 import networkx as nx
-from flask import Flask, request, jsonify
 from scipy.linalg import orth
 import math
 import pickle
 import os
+from flask import Flask, request, jsonify
 import time
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
@@ -15,7 +15,7 @@ import Initialization
 import Average_consensus
 
 # Import only the functions, not the app
-from loadingec2instances import load_neighbor_ips
+from loadingec2instances import load_ec2_node_ips, load_neighbor_ips
 
 # Define Flask app HERE (not in loadingec2instances)
 app = Flask(__name__)
@@ -26,7 +26,11 @@ app = Flask(__name__)
 # ---------------------------
 @app.route("/main", methods=["POST"])
 def main():
-    NODE_ID = 0
+    data = request.json
+    node_id = data.get("to")
+    sender_id = data.get("from", "unknown")
+
+    print(f"Node {node_id} received request from {sender_id}", flush=True)
 
     np.random.seed(0)
     quick_run = True  # set True to test quickly on small sizes
@@ -43,7 +47,7 @@ def main():
 
     idx = np.arange(0, params['T'])
 
-    # Create graph structure
+    # Create graph structure (same seed ensures all nodes have same graph)
     G = nx.erdos_renyi_graph(params['L'], .5, seed=0)
 
     # Ensure graph is connected
@@ -54,33 +58,33 @@ def main():
     np.random.shuffle(idx)
     parts = np.array_split(idx, params['L'])
     S_g = {g: list(parts[g]) for g in range(params['L'])}
-    print(f"Node {NODE_ID} data partition: {S_g[NODE_ID]}", flush=True)
+    print(f"Node {node_id} data partition: {S_g[node_id]}", flush=True)
 
     # Visualize graph (optional - comment out on EC2)
     # nx.draw(G, with_labels=True, node_color='lightblue', edge_color='gray', node_size=500)
     # plt.title(f"Erdos-Renyi Graph with {params['L']} Nodes")
-    # plt.savefig(f'/tmp/graph_node_{NODE_ID}.png')
+    # plt.savefig(f'/tmp/graph_node_{node_id}.png')
     # plt.close()
 
     # Get neighbors for this node
-    neighbors = list(G.neighbors(NODE_ID))
-    print(f"Node {NODE_ID} neighbors: {neighbors}", flush=True)
+    neighbors = list(G.neighbors(node_id))
+    print(f"Node {node_id} neighbors: {neighbors}", flush=True)
 
     # Load neighbor IPs and propagate to them
-    neighbor_ips = load_neighbor_ips(G, NODE_ID, neighbors)
+    neighbor_ips = load_neighbor_ips(G, node_id, neighbors)
 
     # Initialize
     U_init_dict, max_diagonalvalue = Initialization.initialization(Xt, Yt, S_g, G, params, U_star)
 
     # Run decentralized algorithm
-    print(f"Node {NODE_ID}: Starting AltGDmin ...", flush=True)
+    print(f"Node {node_id}: Starting AltGDmin ...", flush=True)
     U_final, errors, times, subspace_dists, Bk = Alternating_gradientdescent.decentralized_altgdmin(
         Xt, Yt, S_g, G, U_init_dict, params, params['Tgd'], max_diagonalvalue, U_star
     )
 
-    print(f"Node {NODE_ID}: Completed computation", flush=True)
+    print(f"Node {node_id}: Completed computation", flush=True)
 
-    return jsonify({"status": "success", "node_id": NODE_ID})
+    return jsonify({"status": "success", "node_id": node_id})
 
 
 if __name__ == "__main__":
