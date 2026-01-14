@@ -40,7 +40,7 @@ def main():
     np.random.seed(0)
     quick_run = True  # set True to test quickly on small sizes
     if quick_run:
-        params = {'n': 50, 'r': 2, 'T': 30, 'L': 4, 'T_pm': 50, 'T_con': 100, 'seed_init': 1, 'print_every': 40,
+        params = {'n': 50, 'r': 2, 'T': 30, 'L': 3, 'T_pm': 50, 'T_con': 100, 'seed_init': 1, 'print_every': 40,
                   'd': 600, 'Tgd': 1400}
     else:
         params = {'n': 600, 'm': 200, 'r': 2, 'T': 600, 'L': 20, 'T_pm': 200, 'T_con': 2000, 'seed_init': 1,
