@@ -66,17 +66,18 @@ def load_neighbor_ips(G, node_id, neighbors):
 
     print(f"Node {node_id} neighbor IPs: {neighbor_ips}", flush=True)
 
-    # Propagate to neighbors
-    propagate_to_neighbors(neighbors, neighbor_ips, G)
+    # Propagate to neighbors that haven't been visited
+    propagate_to_neighbors(node_id, neighbors, neighbor_ips, G)
 
     return neighbor_ips
 
 
-def propagate_to_neighbors(neighbor_ids, neighbor_ips, G):
+def propagate_to_neighbors(current_node_id, neighbor_ids, neighbor_ips, G):
     """
     Send computation requests to neighbor nodes
 
     Args:
+        current_node_id: ID of current node
         neighbor_ids: List of neighbor node IDs
         neighbor_ips: List of neighbor IP addresses
         G: NetworkX graph (to pass graph structure)
@@ -87,12 +88,12 @@ def propagate_to_neighbors(neighbor_ids, neighbor_ips, G):
             continue
 
         try:
-            print(f"Propagating to neighbor {neighbor_id} at {neighbor_ip}", flush=True)
+            print(f"Node {current_node_id}: Propagating to neighbor {neighbor_id} at {neighbor_ip}", flush=True)
             response = requests.post(
                 f"http://{neighbor_ip}:5000/main",
                 json={
                     "to": neighbor_id,
-                    "from": 0  # First node ID
+                    "from": current_node_id
                 },
                 timeout=5
             )
