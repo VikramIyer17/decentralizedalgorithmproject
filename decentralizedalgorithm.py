@@ -16,7 +16,7 @@ import Average_consensus
 
 # Import only the functions, not the app
 from loadingec2instances import load_neighbor_ips
-
+import loadingec2instances
 # Define Flask app HERE (not in loadingec2instances)
 app = Flask(__name__)
 
@@ -28,6 +28,7 @@ app = Flask(__name__)
 def main():
     # Node 0 always uses ID 0, ignores request data
     NODE_ID = 0
+    loadingec2instances.visited.clear()
 
     # Log if this was triggered by another node (optional)
     try:
