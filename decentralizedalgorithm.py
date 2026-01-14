@@ -55,7 +55,7 @@ def main():
 
     # Create graph structure
     print(f"Node {NODE_ID}: Creating graph structure...", flush=True)
-    G = nx.erdos_renyi_graph(params['L'], .5, seed=0)
+    G = nx.erdos_renyi_graph(params['L'], 1, seed=0)
 
     # Ensure graph is connected
     if not nx.is_connected(G):
