@@ -26,7 +26,16 @@ app = Flask(__name__)
 # ---------------------------
 @app.route("/main", methods=["POST"])
 def main():
+    # Node 0 always uses ID 0, ignores request data
     NODE_ID = 0
+
+    # Log if this was triggered by another node (optional)
+    try:
+        data = request.json or {}
+        sender_id = data.get("from", "manual_trigger")
+        print(f"Node {NODE_ID} received trigger from {sender_id}", flush=True)
+    except:
+        print(f"Node {NODE_ID} starting computation", flush=True)
 
     np.random.seed(0)
     quick_run = True  # set True to test quickly on small sizes
@@ -38,12 +47,14 @@ def main():
                   'print_every': 100, 'd': 50, 'Tgd': 500}
 
     # data
+    print(f"Node {NODE_ID}: Generating data...", flush=True)
     theta_star, U_star = Sample_generation.generate_low_rank_matrix(params['d'], params['T'], params['r'], seed=0)
     Xt, Yt = Sample_generation.generate_xtandyt(params['n'], params['T'], params['d'], theta_star, seed=0)
 
     idx = np.arange(0, params['T'])
 
     # Create graph structure
+    print(f"Node {NODE_ID}: Creating graph structure...", flush=True)
     G = nx.erdos_renyi_graph(params['L'], .5, seed=0)
 
     # Ensure graph is connected
@@ -56,20 +67,16 @@ def main():
     S_g = {g: list(parts[g]) for g in range(params['L'])}
     print(f"Node {NODE_ID} data partition: {S_g[NODE_ID]}", flush=True)
 
-    # Visualize graph (optional - comment out on EC2)
-    # nx.draw(G, with_labels=True, node_color='lightblue', edge_color='gray', node_size=500)
-    # plt.title(f"Erdos-Renyi Graph with {params['L']} Nodes")
-    # plt.savefig(f'/tmp/graph_node_{NODE_ID}.png')
-    # plt.close()
-
     # Get neighbors for this node
     neighbors = list(G.neighbors(NODE_ID))
     print(f"Node {NODE_ID} neighbors: {neighbors}", flush=True)
 
     # Load neighbor IPs and propagate to them
+    print(f"Node {NODE_ID}: Loading neighbor IPs and propagating...", flush=True)
     neighbor_ips = load_neighbor_ips(G, NODE_ID, neighbors)
 
     # Initialize
+    print(f"Node {NODE_ID}: Initializing...", flush=True)
     U_init_dict, max_diagonalvalue = Initialization.initialization(Xt, Yt, S_g, G, params, U_star)
 
     # Run decentralized algorithm
@@ -84,4 +91,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print("Starting Node 0 Flask server...", flush=True)
     app.run(host="0.0.0.0", port=5000)
