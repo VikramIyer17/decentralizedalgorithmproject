@@ -58,7 +58,9 @@ def load_neighbor_ips(G, node_id, neighbors):
 
     # Convert neighbor node IDs → IP addresses
     neighbor_ips = []
+
     for neighbor_id in neighbors:
+        print(f"neighbor_id {neighbor_id}", flush=True)
         if neighbor_id in node_ips:
             neighbor_ips.append(node_ips[neighbor_id])
         else:
