@@ -77,8 +77,10 @@ def main():
     neighbor_ips = load_neighbor_ips(G, NODE_ID, neighbors)
 
     # Initialize
-    print(f"Node {NODE_ID}: Initializing...", flush=True)
-    U_init_dict, max_diagonalvalue = Initialization.initialization(Xt, Yt, S_g, G, params, U_star)
+    print(f"Node {NODE_ID}: Starting distributed initialization...", flush=True)
+    U_init_dict, max_diagonalvalue = Initialization.initialization_distributed(
+        NODE_ID, Xt, Yt, S_g, G, params, U_star, neighbors
+    )
 
     # Run decentralized algorithm
     print(f"Node {NODE_ID}: Starting AltGDmin ...", flush=True)
