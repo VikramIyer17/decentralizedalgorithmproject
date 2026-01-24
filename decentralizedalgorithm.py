@@ -26,29 +26,35 @@ app = Flask(__name__)
 # ---------------------------
 @app.route("/main", methods=["POST"])
 def main():
-    data = request.json
-    node_id = data.get("to")
-    sender_id = data.get("from", "unknown")
-
-    print(f"Node {node_id} received request from {sender_id}", flush=True)
+     try:
+        data = request.json
+        NODE_ID = data.get("to")
+        sender_id = data.get("from", "unknown")
+        # data = request.json or {}
+        # sender_id = data.get("from", "manual_trigger")
+        print(f"Node {NODE_ID} received trigger from {sender_id}", flush=True)
+    except:
+        print(f"Node {NODE_ID} starting computation", flush=True)
 
     np.random.seed(0)
     quick_run = True  # set True to test quickly on small sizes
     if quick_run:
-        params = {'n': 50, 'r': 2, 'T': 30, 'L': 4, 'T_pm': 50, 'T_con': 100, 'seed_init': 1, 'print_every': 40,
+        params = {'n': 50, 'r': 2, 'T': 30, 'L': 3, 'T_pm': 50, 'T_con': 100, 'seed_init': 1, 'print_every': 40,
                   'd': 600, 'Tgd': 1400}
     else:
         params = {'n': 600, 'm': 200, 'r': 2, 'T': 600, 'L': 20, 'T_pm': 200, 'T_con': 2000, 'seed_init': 1,
                   'print_every': 100, 'd': 50, 'Tgd': 500}
 
     # data
+    print(f"Node {NODE_ID}: Generating data...", flush=True)
     theta_star, U_star = Sample_generation.generate_low_rank_matrix(params['d'], params['T'], params['r'], seed=0)
     Xt, Yt = Sample_generation.generate_xtandyt(params['n'], params['T'], params['d'], theta_star, seed=0)
 
     idx = np.arange(0, params['T'])
 
-    # Create graph structure (same seed ensures all nodes have same graph)
-    G = nx.erdos_renyi_graph(params['L'], .5, seed=0)
+    # Create graph structure
+    print(f"Node {NODE_ID}: Creating graph structure...", flush=True)
+    G = nx.erdos_renyi_graph(params['L'], 1, seed=0)
 
     # Ensure graph is connected
     if not nx.is_connected(G):
@@ -58,34 +64,31 @@ def main():
     np.random.shuffle(idx)
     parts = np.array_split(idx, params['L'])
     S_g = {g: list(parts[g]) for g in range(params['L'])}
-    print(f"Node {node_id} data partition: {S_g[node_id]}", flush=True)
-
-    # Visualize graph (optional - comment out on EC2)
-    # nx.draw(G, with_labels=True, node_color='lightblue', edge_color='gray', node_size=500)
-    # plt.title(f"Erdos-Renyi Graph with {params['L']} Nodes")
-    # plt.savefig(f'/tmp/graph_node_{node_id}.png')
-    # plt.close()
+    print(f"Node {NODE_ID} data partition: {S_g[NODE_ID]}", flush=True)
 
     # Get neighbors for this node
-    neighbors = list(G.neighbors(node_id))
-    print(f"Node {node_id} neighbors: {neighbors}", flush=True)
+    neighbors = list(G.neighbors(NODE_ID))
+    print(f"Node {NODE_ID} neighbors: {neighbors}", flush=True)
 
     # Load neighbor IPs and propagate to them
-    neighbor_ips = load_neighbor_ips(G, node_id, neighbors)
+    print(f"Node {NODE_ID}: Loading neighbor IPs and propagating...", flush=True)
+    neighbor_ips = load_neighbor_ips(G, NODE_ID, neighbors)
 
     # Initialize
-    U_init_dict, max_diagonalvalue = Initialization.initialization(Xt, Yt, S_g, G, params, U_star)
+    print(f"Node {NODE_ID}: Starting distributed initialization...", flush=True)
+    U_init_dict, max_diagonalvalue = Initialization.initialization_distributed(
+        NODE_ID, Xt, Yt, S_g, G, params, U_star, neighbors
+    )
 
     # Run decentralized algorithm
-    print(f"Node {node_id}: Starting AltGDmin ...", flush=True)
+    print(f"Node {NODE_ID}: Starting AltGDmin ...", flush=True)
     U_final, errors, times, subspace_dists, Bk = Alternating_gradientdescent.decentralized_altgdmin(
         Xt, Yt, S_g, G, U_init_dict, params, params['Tgd'], max_diagonalvalue, U_star
     )
 
-    print(f"Node {node_id}: Completed computation", flush=True)
+    print(f"Node {NODE_ID}: Completed computation", flush=True)
 
-    return jsonify({"status": "success", "node_id": node_id})
-
+    return jsonify({"status": "success", "node_id": NODE_ID})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
