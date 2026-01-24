@@ -26,7 +26,8 @@ app = Flask(__name__)
 # ---------------------------
 @app.route("/main", methods=["POST"])
 def main():
-     try:
+
+    try:
         data = request.json
         NODE_ID = data.get("to")
         sender_id = data.get("from", "unknown")
@@ -89,6 +90,7 @@ def main():
     print(f"Node {NODE_ID}: Completed computation", flush=True)
 
     return jsonify({"status": "success", "node_id": NODE_ID})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
